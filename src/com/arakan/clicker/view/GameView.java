@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -14,15 +17,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.arakan.clicker.model.Upgrade;
+
 public class GameView extends JFrame {
 	private JLabel fragmentLabel;
-	private JLabel costLabel;
-	private JLabel autoCostLabel;
     private JButton clickButton;
-    private JButton addClickFragmentButton;
-    private JButton addAutoCountButton;
-
-    public GameView() {
+    
+    private Map<Upgrade, JButton> upgradeButtons = new HashMap<>();
+    
+    public GameView(List<Upgrade> upgrades) {
         setTitle("クリッカー");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -37,45 +40,30 @@ public class GameView extends JFrame {
         // スコア
         fragmentLabel = new JLabel("欠片: 0");
         fragmentLabel.setFont(new Font("Serif", Font.BOLD, 24));
-        // コスト
-        costLabel = new JLabel("コスト: 0");
-        costLabel.setFont(new Font("Serif", Font.BOLD, 24));
-        // 自動欠片のコスト
-        autoCostLabel = new JLabel("自動収集: 0");
-        autoCostLabel.setFont(new Font("Serif", Font.BOLD, 24));
 
         // 現状左上のパネル
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(fragmentLabel, BorderLayout.WEST);
         
-        // 右上のパネル
-        JPanel rightTopPanel = new JPanel();
-        rightTopPanel.setLayout(new BoxLayout(rightTopPanel, BoxLayout.Y_AXIS));
-        rightTopPanel.add(costLabel);
-        rightTopPanel.add(autoCostLabel);
-        
-        topPanel.add(rightTopPanel, BorderLayout.EAST);
-
         // ボタン
         clickButton = new JButton("クリック！");
         clickButton.setPreferredSize(new Dimension(200, 200));
-        addClickFragmentButton = new JButton("クリックスコア増");
-        addClickFragmentButton.setPreferredSize(new Dimension(200, 100));
-        addAutoCountButton = new JButton("自動収集コスト増");
-        addAutoCountButton.setPreferredSize(new Dimension(200, 100));
-
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.add(clickButton);
-        JPanel rightPanel = new JPanel();
         
+        // 強化ボタン
+        JPanel rightPanel = new JPanel();
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 250)));
-        buttonPanel.add(addClickFragmentButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        buttonPanel.add(addAutoCountButton);
-        
+        // 強化ボタンの自動生成。強化項目の数に応じて生成する
+        for(Upgrade up : upgrades) {
+            JButton button = new JButton(up.getName()+ " : "+ up.getCost());
+            button.setPreferredSize(new Dimension(200, 100));
+            buttonPanel.add(button);
+            buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+            upgradeButtons.put(up, button);
+        }
         rightPanel.add(buttonPanel);
 
         add(centerPanel, BorderLayout.CENTER);
@@ -88,24 +76,23 @@ public class GameView extends JFrame {
     public void setScore(int fragment) {
     		fragmentLabel.setText("欠片: " + fragment);
     }
-    
-    public void setCost(int cost) {
-    		costLabel.setText("コスト: " + cost);
-    }
-    
-    public void setAutoCost(int cost) {
-    		autoCostLabel.setText("自動収集コスト: " + cost);
-    }
 
     public JButton getClickButton() {
         return clickButton;
     }
     
-    public JButton getAddClickFragmentButton() {
-    		return addClickFragmentButton;
+    public void updateUpgradeButton(Upgrade up, boolean canBuy) {
+    	    JButton button = upgradeButtons.get(up);
+    	    button.setText(up.getName()+ " : "+ up.getCost());
+    	    button.setEnabled(canBuy);
     	}
     
-    public JButton getAddAutoCountButton() {
-    		return addAutoCountButton;
-    }
+    /**
+     * 渡されてきた強化内容のボタンを返す
+     * @param up
+     * @return
+     */
+    public JButton getUpgradeButton(Upgrade up) {
+    	    return upgradeButtons.get(up);
+    	}
 }

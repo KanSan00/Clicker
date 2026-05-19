@@ -1,6 +1,9 @@
 package com.arakan.clicker.controller;
 
+import javax.swing.JButton;
+
 import com.arakan.clicker.model.GameModel;
+import com.arakan.clicker.model.Upgrade;
 import com.arakan.clicker.view.GameView;
 
 public class GameController {
@@ -12,9 +15,7 @@ public class GameController {
         this.view = view;
 
         initController();
-        // コストの初期値の表示
-        updateCostView();
-        updateAutoCountCostView();
+        updateView();
     }
 
     private void initController() {
@@ -25,28 +26,14 @@ public class GameController {
             updateView();
         });
         
-        // クリックスコアのアップグレード
-        view.getAddClickFragmentButton().addActionListener(e -> {
-        	
-        		// スコアがコストより少ない場合はリターン
-        		if(model.getFragment() < model.getCost()) return;
-        		
-    			model.diffFragment();
-    			model.upgradeClickPower();
-    			model.upgradeCost();
-    			updateCostView();
-        });
-        
-        view.getAddAutoCountButton().addActionListener(e -> {
-        	
-        		// スコアがコストより少ない場合はリターン
-        		if(model.getFragment() < model.getAutoCountCost()) return;
-        		
-    			model.fragmentDiffAutoCountCost();
-    			model.upgradeAutoCount();
-    			model.upgradeAutoCountCost();
-    			updateAutoCountCostView();
-        });
+        // 強化項目のアップグレード
+        for(Upgrade up : model.getUpgrades()) {
+            JButton button = view.getUpgradeButton(up);
+            button.addActionListener(e -> {
+            		model.buyUpgrade(up);
+            		updateView();
+            	});
+        }
         
         // タイマー
         new javax.swing.Timer(1000, e -> {
@@ -57,14 +44,11 @@ public class GameController {
 
     // 獲得スコアをGUIに反映させる
     private void updateView() {
-        view.setScore(model.getFragment());
-    }
-    
-    private void updateCostView() {
-    		view.setCost(model.getCost());
-    }
-    
-    private void updateAutoCountCostView() {
-    		view.setAutoCost(model.getAutoCountCost());
+    		// スコア更新
+    		view.setScore(model.getFragment());
+    		for(Upgrade up : model.getUpgrades()) {
+    	    		// 購入可能か
+    	    		view.updateUpgradeButton(up, model.canBuyUpgrade(up));
+    	    }
     }
 }

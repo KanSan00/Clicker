@@ -6,13 +6,9 @@ import com.arakan.clicker.view.GameView;
 
 public class Clicker {
 	
-	public Clicker() {
-		
-	}
-	
 	public static void main(String[] args) {
 		GameModel model = new GameModel();
-        GameView view = new GameView();
+        GameView view = new GameView(model.getUpgrades());
         new GameController(model, view);
 	}
 }

@@ -7,6 +7,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -59,19 +60,26 @@ public class GameView extends JFrame {
         clickButton = new JButton("クリック！");
         clickButton.setPreferredSize(new Dimension(200, 200));
         addClickFragmentButton = new JButton("クリックスコア増");
-        addClickFragmentButton.setPreferredSize(new Dimension(200, 50));
+        addClickFragmentButton.setPreferredSize(new Dimension(200, 100));
         addAutoCountButton = new JButton("自動収集コスト増");
         addAutoCountButton.setPreferredSize(new Dimension(200, 100));
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.add(clickButton);
         JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        rightPanel.add(addClickFragmentButton);
-        rightPanel.add(addAutoCountButton);
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 250)));
+        buttonPanel.add(addClickFragmentButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        buttonPanel.add(addAutoCountButton);
+        
+        rightPanel.add(buttonPanel);
 
-        add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
         add(rightPanel, BorderLayout.EAST);
 
         setVisible(true);

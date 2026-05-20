@@ -7,7 +7,7 @@ public class GameModel {
 
 	private int fragment = 0;
 	private int clickPower = 1;
-	private int autoCount = 0;
+	private int autoPower = 0;
     private Upgrade clickUpgrade;
     private Upgrade autoUpgrade;
 	
@@ -16,7 +16,7 @@ public class GameModel {
     public GameModel() {
 	    	clickUpgrade = new Upgrade("クリック強化", 100, 1, UpgradeType.CLICK);
 	    	autoUpgrade = new Upgrade("自動強化", 100, 1, UpgradeType.AUTO);
-	    	
+
     		upgrades.add(clickUpgrade);
     		upgrades.add(autoUpgrade);
     }
@@ -37,14 +37,6 @@ public class GameModel {
     public int getFragment() {
         return fragment;
     }
-    
-    public int getCost() {
-    	 return clickUpgrade.getCost();
-    }
-    
-    public int getAutoCountCost() {
-    		return autoUpgrade.getCost();
-    }
 
     // ワンクリックのパワーを返す
     public int getClickPower() {
@@ -57,40 +49,34 @@ public class GameModel {
     }
     // 自動でスコア増やす
     public void addAutoFragment() {
-    		fragment += autoCount;
+    		fragment += autoPower;
+    }
+    
+    public void addClickPower(int power) {
+        clickPower += power;
+    }
+
+    public void addAutoPower(int power) {
+    		autoPower += power;
     }
 
     // クリックから獲得できるスコアを増やす
     public void buyUpgrade(Upgrade up) {
     	 if(fragment < up.getCost()) return;
     	    fragment -= up.getCost();
-    	    switch(up.getType()) {
-    	        case CLICK:
-    	            clickPower += up.getPower();
-    	            break;
-    	        case AUTO:
-    	            autoCount += up.getPower();
-    	            break;
-    	    }
+    	    applyUpgradeEffect(up);
     		up.increaseCost();
     }
     
-    // コストの更新
-    public void upgradeCost() {
-    		clickUpgrade.increaseCost();
-    }
-    
-    // 自動欠片収集のコストの更新
-    public void upgradeAutoCountCost() {
-    		autoUpgrade.increaseCost();
-    }
-    
-    // コスト分スコアを引く
-    public void diffFragment() {
-    		fragment -= clickUpgrade.getCost();
-    }
-    public void fragmentDiffAutoCountCost() {
-    		fragment -= autoUpgrade.getCost();
+    private void applyUpgradeEffect(Upgrade up) {
+    		switch(up.getType()) {
+    			case CLICK:
+    				clickPower += up.getPower();
+    				break;
+    			case AUTO:
+    				autoPower += up.getPower();
+    				break;
+    		}
     }
     
     // 購入できるかどうかの判定

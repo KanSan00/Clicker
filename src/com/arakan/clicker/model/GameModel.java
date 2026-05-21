@@ -1,36 +1,37 @@
 package com.arakan.clicker.model;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameModel {
 
 	private int fragment = 0;
-	private int clickPower = 1;
-	private int autoPower = 0;
-    private Upgrade clickUpgrade;
-    private Upgrade autoUpgrade;
+	
+	private Map<UpgradeType, Integer> stats = new EnumMap<>(UpgradeType.class);
 	
 	private List<Upgrade> upgrades = new ArrayList<>();
 
     public GameModel() {
-	    	clickUpgrade = new Upgrade("クリック強化", 100, 1, UpgradeType.CLICK);
-	    	autoUpgrade = new Upgrade("自動強化", 100, 1, UpgradeType.AUTO);
-
-    		upgrades.add(clickUpgrade);
-    		upgrades.add(autoUpgrade);
+        for (UpgradeType type : UpgradeType.values()) {
+            upgrades.add(new Upgrade(type));
+            stats.put(type, 0);
+        }
+        stats.put(UpgradeType.CLICK, 1);
     }
+    
+    public int getPower(UpgradeType type) {
+        return stats.get(type);
+    }
+    
+    public void addPower(UpgradeType type,int value) {
+    		stats.put(type,stats.get(type) + value);
+    }
+    
     
     public List<Upgrade> getUpgrades() {
         return upgrades;
-    }
-    
-    public Upgrade getClickUpgrade() {
-        return clickUpgrade;
-    }
-
-    public Upgrade getAutoUpgrade() {
-        return autoUpgrade;
     }
     
     // 獲得スコアを返す
@@ -38,48 +39,45 @@ public class GameModel {
         return fragment;
     }
 
-    // ワンクリックのパワーを返す
-    public int getClickPower() {
-        return clickUpgrade.getPower();
-    }
-
     // クリックされた時に追加されるスコア
-    public void addFragment() {
-    		fragment += clickPower;
-    }
-    // 自動でスコア増やす
-    public void addAutoFragment() {
-    		fragment += autoPower;
+    public void addFragment(Upgrade up) {
+    		fragment += up.getPower();
     }
     
-    public void addClickPower(int power) {
-        clickPower += power;
+    /**
+     * 渡されたTypeからそのUpgradeを返す。
+     * @param type
+     * @return
+     */
+    public Upgrade getUpgrade(UpgradeType type) {
+    		for(Upgrade up : upgrades) {
+    			if(up.getType() == type) {
+    				return up;
+    			}
+        }
+
+        return null;
     }
 
-    public void addAutoPower(int power) {
-    		autoPower += power;
-    }
-
-    // クリックから獲得できるスコアを増やす
+    /**
+     *  クリックから獲得できるスコアを増やす
+     * @param up
+     */
     public void buyUpgrade(Upgrade up) {
-    	 if(fragment < up.getCost()) return;
+    	
+    	if(!canBuyUpgrade(up)) return;
+    	
     	    fragment -= up.getCost();
-    	    applyUpgradeEffect(up);
+    	    
     		up.increaseCost();
+    		up.increasePower();
     }
     
-    private void applyUpgradeEffect(Upgrade up) {
-    		switch(up.getType()) {
-    			case CLICK:
-    				clickPower += up.getPower();
-    				break;
-    			case AUTO:
-    				autoPower += up.getPower();
-    				break;
-    		}
-    }
-    
-    // 購入できるかどうかの判定
+    /**
+     *  購入できるかどうかの判定
+     * @param up
+     * @return
+     */
     public boolean canBuyUpgrade(Upgrade up) {
         return fragment >= up.getCost();
     }

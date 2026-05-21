@@ -62,6 +62,7 @@ public class GameView extends JFrame {
             button.setPreferredSize(new Dimension(200, 100));
             buttonPanel.add(button);
             buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+            // Mapに追加
             upgradeButtons.put(up, button);
         }
         rightPanel.add(buttonPanel);

@@ -4,6 +4,7 @@ import javax.swing.JButton;
 
 import com.arakan.clicker.model.GameModel;
 import com.arakan.clicker.model.Upgrade;
+import com.arakan.clicker.model.UpgradeType;
 import com.arakan.clicker.view.GameView;
 
 public class GameController {
@@ -22,7 +23,7 @@ public class GameController {
 
     		// ボタンのクリックイベントの監視
         view.getClickButton().addActionListener(e -> {
-            model.addFragment();
+            model.addFragment(model.getUpgrade(UpgradeType.CLICK));
             updateView();
         });
         
@@ -37,7 +38,7 @@ public class GameController {
         
         // タイマー
         new javax.swing.Timer(1000, e -> {
-            model.addAutoFragment();
+        		model.addFragment(model.getUpgrade(UpgradeType.AUTO));
             updateView();
         }).start();
     }

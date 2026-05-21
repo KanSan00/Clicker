@@ -9,10 +9,10 @@ public class Upgrade {
 	private int power;
 	private double magnification = 1.2;
 	
-	public Upgrade(String name, int cost, int power, UpgradeType type) {
-		this.name = name;
-		this.cost = cost;
-		this.power = power;
+	public Upgrade(UpgradeType type) {
+		this.name = type.getName();
+		this.cost = type.getCost();
+		this.power = type.getPower();
 		this.type = type;
 	}
 	
@@ -35,5 +35,9 @@ public class Upgrade {
 	// コスト増加
     public void increaseCost() {
         cost = (int)(cost * magnification);
+    }
+    
+    public void increasePower() {
+    		power++;
     }
 }

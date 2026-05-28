@@ -9,6 +9,10 @@ public class AutoUpgrade extends Upgrade implements Tickable {
 		super(type);
 		// TODO 自動生成されたコンストラクター・スタブ
 	}
+	
+	public int getInterval() {
+		return interval;
+	}
 
 	@Override
 	public void buyUpgrade() {

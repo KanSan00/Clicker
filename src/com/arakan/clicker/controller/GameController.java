@@ -3,6 +3,7 @@ package com.arakan.clicker.controller;
 import javax.swing.JButton;
 
 import com.arakan.clicker.model.GameModel;
+import com.arakan.clicker.model.upgrade.AutoUpgrade;
 import com.arakan.clicker.model.upgrade.Tickable;
 import com.arakan.clicker.model.upgrade.Upgrade;
 import com.arakan.clicker.model.upgrade.UpgradeType;
@@ -48,7 +49,6 @@ public class GameController {
         new javax.swing.Timer(10, e -> {
             
             // モデル内のTickableなアップグレードすべてに通知する
-            // (Model側に upgrades の中で Tickable を実装しているものを一斉に tick させるメソッドを作ると良いです)
             for (Upgrade up : model.getUpgrades()) {
                 if (up instanceof Tickable) {
                 		// int で発動回数を受け取る
@@ -61,7 +61,6 @@ public class GameController {
                 }
             }
 
-            // 必要に応じて、何かが発動した時だけ view を更新する形にするとさらに効率的です
             updateView(); 
         }).start();
     }
@@ -73,6 +72,11 @@ public class GameController {
     		for(Upgrade up : model.getUpgrades()) {
     	    		// 購入可能か
     	    		view.updateUpgradeButton(up, model.canBuyUpgrade(up));
+    	    }
+    		
+    		AutoUpgrade autoUp = (AutoUpgrade) model.getUpgrade(UpgradeType.AUTO);
+    	    if (autoUp != null) {
+    	        view.setIntervalText(autoUp.getInterval());
     	    }
     }
 }

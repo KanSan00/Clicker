@@ -21,6 +21,8 @@ import com.arakan.clicker.model.upgrade.Upgrade;
 
 public class GameView extends JFrame {
 	private JLabel fragmentLabel;
+	// GameView.java の上部（フィールド変数定義）に追記
+	private JLabel intervalLabel; // ← 追加
     private JButton clickButton;
     
     private Map<Upgrade, JButton> upgradeButtons = new HashMap<>();
@@ -40,10 +42,14 @@ public class GameView extends JFrame {
         // スコア
         fragmentLabel = new JLabel("欠片: 0");
         fragmentLabel.setFont(new Font("Serif", Font.BOLD, 24));
+        
+        intervalLabel = new JLabel("収集間隔: 1000ms");
+        intervalLabel.setFont(new Font("Serif", Font.PLAIN, 18));
 
         // 現状左上のパネル
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(fragmentLabel, BorderLayout.WEST);
+        topPanel.add(intervalLabel, BorderLayout.EAST);
         
         // ボタン
         clickButton = new JButton("クリック！");
@@ -96,4 +102,9 @@ public class GameView extends JFrame {
     public JButton getUpgradeButton(Upgrade up) {
     	    return upgradeButtons.get(up);
     	}
+    
+ // ▼ 下部（メソッド定義エリア）に、値を更新するためのメソッドを追加 ▼
+    public void setIntervalText(int ms) {
+        intervalLabel.setText("収集間隔: " + ms + "ms");
+    }
 }

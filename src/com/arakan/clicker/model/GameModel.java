@@ -1,34 +1,33 @@
 package com.arakan.clicker.model;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
+
+import com.arakan.clicker.model.upgrade.AutoUpgrade;
+import com.arakan.clicker.model.upgrade.ClickUpgrade;
+import com.arakan.clicker.model.upgrade.TimeUpgrade;
+import com.arakan.clicker.model.upgrade.Upgrade;
+import com.arakan.clicker.model.upgrade.UpgradeType;
 
 public class GameModel {
 
 	private int fragment = 0;
 	
-	private Map<UpgradeType, Integer> stats = new EnumMap<>(UpgradeType.class);
-	
 	private List<Upgrade> upgrades = new ArrayList<>();
 
     public GameModel() {
-        for (UpgradeType type : UpgradeType.values()) {
-            upgrades.add(new Upgrade(type));
-            stats.put(type, 0);
-        }
-        stats.put(UpgradeType.CLICK, 1);
+    		// 初期化
+    	// まずインスタンス（実体）を変数として作る
+        ClickUpgrade clickUp = new ClickUpgrade(UpgradeType.CLICK);
+        AutoUpgrade autoUp = new AutoUpgrade(UpgradeType.AUTO);
+        
+        // 作ったものをリストに登録する
+        upgrades.add(clickUp);
+        upgrades.add(autoUp);
+        
+        // 時間短縮には、上で作った autoUp（同じ実体）を渡して連携させる！
+        upgrades.add(new TimeUpgrade(UpgradeType.TIMESAVING, autoUp));
     }
-    
-    public int getPower(UpgradeType type) {
-        return stats.get(type);
-    }
-    
-    public void addPower(UpgradeType type,int value) {
-    		stats.put(type,stats.get(type) + value);
-    }
-    
     
     public List<Upgrade> getUpgrades() {
         return upgrades;
@@ -41,7 +40,7 @@ public class GameModel {
 
     // クリックされた時に追加されるスコア
     public void addFragment(Upgrade up) {
-    		fragment += up.getPower();
+    		fragment += up.getAbility();
     }
     
     /**
@@ -60,7 +59,7 @@ public class GameModel {
     }
 
     /**
-     *  クリックから獲得できるスコアを増やす
+     *  購入されたupgradeをアップグレードする
      * @param up
      */
     public void buyUpgrade(Upgrade up) {
@@ -70,7 +69,8 @@ public class GameModel {
     	    fragment -= up.getCost();
     	    
     		up.increaseCost();
-    		up.increasePower();
+    		
+    		up.buyUpgrade();
     }
     
     /**
@@ -80,5 +80,14 @@ public class GameModel {
      */
     public boolean canBuyUpgrade(Upgrade up) {
         return fragment >= up.getCost();
+    }
+    
+    
+    /**
+     * 任意の数だけ増やす
+     * @param amount
+     */
+    public void addDebugFragment(int amount) {
+        this.fragment += amount;
     }
 }

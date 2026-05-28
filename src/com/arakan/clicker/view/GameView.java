@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.arakan.clicker.model.Upgrade;
+import com.arakan.clicker.model.upgrade.Upgrade;
 
 public class GameView extends JFrame {
 	private JLabel fragmentLabel;
